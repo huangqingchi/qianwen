@@ -20,7 +20,7 @@ python .\评测\run.py --profile smoke
 
 结果保存在 `评测/结果/<运行时间>/`。其中 `总览.md` 只列各项分数；每个项目都有独立的 `报告.md` 和 `结果.json`。每次运行都会新建目录，旧结果不会被覆盖。`--output-dir` 可指定结果位置。
 
-默认沿用项目根目录 `eval_config.json` 中的模型和档位；可以用 `--model`、`--base-url` 和环境变量 `DASHSCOPE_BASE_URL` 覆盖。运行前必须设置 `DASHSCOPE_API_KEY`。当前默认档位 `smoke` 的题数和请求次数较少；`standard`、`extended` 会增加测试量。长上下文可单测一个指定长度：
+默认沿用项目根目录 `eval_config.json` 中的模型和档位；可以用 `--model`、`--base-url` 和环境变量 `DASHSCOPE_BASE_URL` 覆盖。运行前在项目根目录的 `本地密钥.txt` 写入 API Key；设置 `DASHSCOPE_API_KEY` 环境变量时会优先使用环境变量。当前默认档位 `smoke` 的题数和请求次数较少；`standard`、`extended` 会增加测试量。长上下文可单测一个指定长度：
 
 ```powershell
 python .\评测\run.py --item 长上下文 --only-long-context --context-words 7000

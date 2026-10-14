@@ -4,12 +4,24 @@ import argparse
 import json
 import os
 import sys
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 
 DEFAULT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 DEFAULT_MODEL = "glm-5.3"
+LOCAL_API_KEY_FILE = Path(__file__).resolve().with_name("本地密钥.txt")
+
+
+def load_api_key() -> str:
+    """优先用环境变量，否则读取项目根目录中不会上传的本地密钥文件。"""
+    from_environment = os.environ.get("DASHSCOPE_API_KEY")
+    if from_environment:
+        return from_environment.strip()
+    if LOCAL_API_KEY_FILE.is_file():
+        return LOCAL_API_KEY_FILE.read_text(encoding="utf-8-sig").strip()
+    return ""
 
 
 def ask_model(api_key: str, base_url: str, model: str, messages: list[dict]) -> str | None:
@@ -63,9 +75,9 @@ def main() -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL, help=f"模型名称，默认 {DEFAULT_MODEL}")
     args = parser.parse_args()
 
-    api_key = os.environ.get("DASHSCOPE_API_KEY")
+    api_key = load_api_key()
     if not api_key:
-        parser.error("请先设置 DASHSCOPE_API_KEY 环境变量")
+        parser.error("请填写项目根目录的 本地密钥.txt，或设置 DASHSCOPE_API_KEY")
     base_url = os.environ.get("DASHSCOPE_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
 
     if args.message:

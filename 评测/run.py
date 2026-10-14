@@ -160,14 +160,14 @@ def main() -> int:
     if args.only_long_context and (args.item != "长上下文" or args.context_words is None):
         parser.error("--only-long-context 需要 --item 长上下文 和 --context-words")
 
-    from qwen_chat import DEFAULT_BASE_URL, DEFAULT_MODEL
+    from qwen_chat import DEFAULT_BASE_URL, DEFAULT_MODEL, load_api_key
 
     config = json.loads((QWEN_DIR / "eval_config.json").read_text(encoding="utf-8"))
     profile_name = args.profile or config["default_profile"]
     profile = config["profiles"][profile_name]
-    api_key = os.environ.get("DASHSCOPE_API_KEY")
+    api_key = load_api_key()
     if not api_key:
-        parser.error("请设置 DASHSCOPE_API_KEY")
+        parser.error("请填写项目根目录的 本地密钥.txt，或设置 DASHSCOPE_API_KEY")
     base_url = args.base_url or os.environ.get("DASHSCOPE_BASE_URL") or DEFAULT_BASE_URL
     model = args.model or config.get("model") or DEFAULT_MODEL
     out_dir = args.output_dir or ROOT / "结果" / datetime.now().strftime("%Y%m%d-%H%M%S-%f")

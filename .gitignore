@@ -5,3 +5,4 @@ __pycache__/
 .env
 .env.*
 /评测/结果/
+/本地密钥.txt

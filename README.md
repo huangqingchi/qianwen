@@ -8,7 +8,7 @@
 
 需要 Python 3.10 或更新版本。脚本只用 Python 标准库；运行本地自动测试需要 `pytest`。
 
-在 PowerShell 中设置百炼 API Key：
+在项目根目录新建 `本地密钥.txt`，文件内容只写你的百炼 API Key（一行即可）。此文件已加入 `.gitignore`，不会上传到 GitHub。也可以在 PowerShell 中临时设置环境变量来覆盖文件中的密钥：
 
 ```powershell
 $env:DASHSCOPE_API_KEY = '你的 API Key'
