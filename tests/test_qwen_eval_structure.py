@@ -78,6 +78,8 @@ def test_each_item_has_its_own_score_and_report(tmp_path):
             assert all(check["结果"] == "通过" for check in result["用例结果"])
             assert (output / item / "报告.md").exists()
             assert (output / "总览.md").exists()
+            pdf = output / "评测汇总.pdf"
+            assert pdf.read_bytes().startswith(b"%PDF-")
             assert len(list(output.glob("*/结果.json"))) == 1
             assert "local-test-key" not in json.dumps(result)
     finally:

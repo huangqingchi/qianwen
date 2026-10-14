@@ -18,7 +18,9 @@ python -m 评测.run --item 长上下文 --profile smoke
 python -m 评测.run --profile smoke
 ```
 
-结果保存在项目内的 `评测/结果/<运行时间>/`。其中 `总览.md` 只列各项分数；每个项目都有独立的 `报告.md` 和 `结果.json`。每次运行都会新建目录，旧结果不会被覆盖。`--output-dir` 可指定结果位置；相对路径以项目根目录为基准，绝对路径按当前操作系统解释。
+结果保存在项目内的 `评测/结果/<运行时间>/`。其中 `评测汇总.pdf` 汇总本次全部项目；`总览.md` 只列各项分数；每个项目仍有独立的 `报告.md` 和 `结果.json`。PDF 依赖 `reportlab`，先运行 `python -m pip install -r requirements.txt`。每次运行都会新建目录，旧结果不会被覆盖。`--output-dir` 可指定结果位置；相对路径以项目根目录为基准，绝对路径按当前操作系统解释。
+
+对已有结果补生成 PDF：`python -m 评测.pdf_report 评测/结果/<运行时间>`。此命令只读取本地 JSON，不调用模型。
 
 默认沿用项目根目录 `eval_config.json` 中的模型和档位；可以用 `--model`、`--base-url` 和环境变量 `DASHSCOPE_BASE_URL` 覆盖。运行前在项目根目录的 `本地密钥.txt` 写入 API Key；设置 `DASHSCOPE_API_KEY` 环境变量时会优先使用环境变量。当前默认档位 `smoke` 的题数和请求次数较少；`standard`、`extended` 会增加测试量。长上下文可单测一个指定长度：
 

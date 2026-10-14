@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent
 QWEN_DIR = ROOT.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(QWEN_DIR))
+
 ITEMS = ("接口契约", "错误契约", "用量统计", "长上下文", "缓存命中", "固定题集精度", "性能基线")
 PROFILE_NAMES = {"smoke": "快速", "standard": "标准", "extended": "扩展"}
 STATUS_NAMES = {"PASS": "通过", "FAIL": "失败", "ERROR": "执行出错",
@@ -161,6 +162,14 @@ def main() -> int:
     if args.only_long_context and (args.item != "长上下文" or args.context_words is None):
         parser.error("--only-long-context 需要 --item 长上下文 和 --context-words")
 
+    # 在发送任何 API 请求前检查 PDF 依赖，避免测试结束后才发现无法生成汇总。
+    try:
+        from pdf_report import build_pdf
+    except ModuleNotFoundError as error:
+        if error.name == "reportlab":
+            parser.error("缺少 PDF 依赖；请先运行 python -m pip install -r requirements.txt")
+        raise
+
     from qwen_chat import DEFAULT_BASE_URL, DEFAULT_MODEL, load_api_key
 
     config = json.loads((QWEN_DIR / "eval_config.json").read_text(encoding="utf-8"))
@@ -199,7 +208,9 @@ def main() -> int:
         print(f"  分数：{value}；报告：{out_dir / item / '报告.md'}", flush=True)
 
     write_overview(out_dir, model, profile_name, overview)
+    pdf_path = build_pdf(out_dir)
     print(f"总览：{out_dir / '总览.md'}", flush=True)
+    print(f"PDF 汇总：{pdf_path}", flush=True)
     return 1 if any(item["failed"] for item in overview) else 0
 
 

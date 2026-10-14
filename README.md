@@ -6,7 +6,13 @@
 
 ## 准备
 
-需要 Python 3.10 或更新版本。脚本只用 Python 标准库；运行本地自动测试需要 `pytest`。
+需要 Python 3.10 或更新版本。PDF 输出使用 ReportLab，在项目根目录安装：
+
+```text
+python -m pip install -r requirements.txt
+```
+
+Ubuntu 若使用 `python3`，安装命令相应写作 `python3 -m pip install -r requirements.txt`。运行本地自动测试还需要 `pytest`。
 
 在项目根目录新建 `本地密钥.txt`，文件内容只写你的百炼 API Key（一行即可）。此文件已加入 `.gitignore`，不会上传到 GitHub。也可以设置 `DASHSCOPE_API_KEY` 环境变量来覆盖文件中的密钥。
 
@@ -38,4 +44,10 @@ python3 -m 评测.run --profile smoke
 
 详细参数、独立计分和结果目录见 [评测说明](评测/README.md)。单独手工聊天可在项目根目录运行 `python -m qwen_chat "你好"`（Ubuntu 通常用 `python3`）。
 
-结果写入项目内的 `评测/结果/<运行时间>/`，该目录不会提交到 Git。相对的 `--output-dir` 也以项目根目录为基准。现有分数是本地用例通过率，并不等于照片中的正式等级。
+结果写入项目内的 `评测/结果/<运行时间>/`：其中 `评测汇总.pdf` 把本次项目结果汇总在一起，原有的 `总览.md`、各项目 `报告.md` 和 `结果.json` 仍会生成。该目录不会提交到 Git。相对的 `--output-dir` 也以项目根目录为基准。现有分数是本地用例通过率，并不等于照片中的正式等级。
+
+已有结果可直接生成 PDF，无需重新请求模型：
+
+```text
+python -m 评测.pdf_report 评测/结果/<运行时间>
+```
