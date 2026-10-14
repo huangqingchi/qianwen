@@ -1,0 +1,10 @@
+[
+  {"id": "arithmetic_multiply", "category": "计算", "prompt": "17乘以23等于多少？只输出阿拉伯数字。", "expected": "391"},
+  {"id": "arithmetic_divide", "category": "计算", "prompt": "144除以12等于多少？只输出阿拉伯数字。", "expected": "12"},
+  {"id": "deduction", "category": "推理", "prompt": "已知甲比乙高，乙比丙高。甲和丙谁更高？只输出甲或丙。", "expected": "甲"},
+  {"id": "counting", "category": "推理", "prompt": "盒子里有18个苹果，拿走7个，再放进3个。现在有几个？只输出阿拉伯数字。", "expected": "14"},
+  {"id": "reverse", "category": "指令", "prompt": "把字符串 abcde 按字符逆序排列。只输出结果。", "expected": "edcba"},
+  {"id": "extract", "category": "信息抽取", "prompt": "文本：订单号A-17，金额259元，收件人李明。只输出金额中的阿拉伯数字。", "expected": "259"},
+  {"id": "code", "category": "代码", "prompt": "Python表达式 sum(range(5)) 的结果是什么？只输出阿拉伯数字。", "expected": "10"},
+  {"id": "unit", "category": "单位换算", "prompt": "3.5千米等于多少米？只输出阿拉伯数字。", "expected": "3500"}
+]
