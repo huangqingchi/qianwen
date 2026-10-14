@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 QWEN_DIR = ROOT.parent
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(QWEN_DIR))
 ITEMS = ("接口契约", "错误契约", "用量统计", "长上下文", "缓存命中", "固定题集精度", "性能基线")
 PROFILE_NAMES = {"smoke": "快速", "standard": "标准", "extended": "扩展"}
@@ -170,7 +171,11 @@ def main() -> int:
         parser.error("请填写项目根目录的 本地密钥.txt，或设置 DASHSCOPE_API_KEY")
     base_url = args.base_url or os.environ.get("DASHSCOPE_BASE_URL") or DEFAULT_BASE_URL
     model = args.model or config.get("model") or DEFAULT_MODEL
+    # 默认结果写在项目内部；相对的 --output-dir 也以项目根目录为基准。
+    # Path 会按当前系统处理 Windows/Ubuntu 的分隔符和绝对路径。
     out_dir = args.output_dir or ROOT / "结果" / datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    if not out_dir.is_absolute():
+        out_dir = QWEN_DIR / out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
     # 指定 --item 只跑一项；不指定才按顺序运行七项。
     selected = [args.item] if args.item else list(ITEMS)

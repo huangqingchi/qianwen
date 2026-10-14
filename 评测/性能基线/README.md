@@ -2,4 +2,4 @@
 
 发送少量串行、并发和流式请求，记录成功率、端到端时延 P50/P95、流式首 token 和首段可见文本时间。当前没有照片中的性能阈值，因此成功完成时只显示实测值，不给等级分。
 
-运行：`python .\评测\run.py --item 性能基线 --profile smoke`
+运行：`python -m 评测.run --item 性能基线 --profile smoke`（Ubuntu 通常用 `python3`）。

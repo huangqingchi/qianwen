@@ -2,4 +2,4 @@
 
 故意发送错误模型名、无效 API Key、非法消息格式；要求返回预期的 HTTP 错误码和结构化错误代码。三项各占一个本地用例。
 
-运行：`python .\评测\run.py --item 错误契约`
+运行：`python -m 评测.run --item 错误契约`（Ubuntu 通常用 `python3`）。

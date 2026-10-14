@@ -10,6 +10,7 @@ from threading import Thread
 
 
 RUNNER = Path(__file__).resolve().parents[1] / "评测" / "run.py"
+PROJECT_ROOT = RUNNER.parents[1]
 
 
 class FakeChat(BaseHTTPRequestHandler):
@@ -57,11 +58,18 @@ def test_each_item_has_its_own_score_and_report(tmp_path):
         env = {**os.environ, "DASHSCOPE_API_KEY": "local-test-key"}
         for item, expected_count in (("用量统计", 2), ("错误契约", 3)):
             output = tmp_path / item
+            # 模块方式和“从项目外执行脚本”各跑一次，覆盖两种启动路径。
+            if item == "用量统计":
+                command = [sys.executable, "-m", "评测.run"]
+                working_dir = PROJECT_ROOT
+            else:
+                command = [sys.executable, str(RUNNER)]
+                working_dir = tmp_path
             process = subprocess.run(
-                [sys.executable, str(RUNNER), "--item", item,
+                [*command, "--item", item,
                  "--base-url", f"http://127.0.0.1:{server.server_port}",
                  "--output-dir", str(output)],
-                env=env, capture_output=True, timeout=30,
+                cwd=working_dir, env=env, capture_output=True, timeout=30,
             )
             assert process.returncode == 0, process.stderr.decode(errors="replace")
             result = json.loads((output / item / "结果.json").read_text(encoding="utf-8"))
@@ -76,3 +84,11 @@ def test_each_item_has_its_own_score_and_report(tmp_path):
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+def test_module_command_works_from_project_root():
+    process = subprocess.run(
+        [sys.executable, "-m", "评测.run", "--list"],
+        cwd=PROJECT_ROOT, capture_output=True, timeout=10,
+    )
+    assert process.returncode == 0, process.stderr.decode(errors="replace")

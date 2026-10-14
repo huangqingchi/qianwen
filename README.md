@@ -8,24 +8,34 @@
 
 需要 Python 3.10 或更新版本。脚本只用 Python 标准库；运行本地自动测试需要 `pytest`。
 
-在项目根目录新建 `本地密钥.txt`，文件内容只写你的百炼 API Key（一行即可）。此文件已加入 `.gitignore`，不会上传到 GitHub。也可以在 PowerShell 中临时设置环境变量来覆盖文件中的密钥：
-
-```powershell
-$env:DASHSCOPE_API_KEY = '你的 API Key'
-```
+在项目根目录新建 `本地密钥.txt`，文件内容只写你的百炼 API Key（一行即可）。此文件已加入 `.gitignore`，不会上传到 GitHub。也可以设置 `DASHSCOPE_API_KEY` 环境变量来覆盖文件中的密钥。
 
 密钥不会保存在源码或报告中。如果密钥所在地域不同，可额外设置 `DASHSCOPE_BASE_URL`。
 
 ## 运行
 
-进入本项目根目录 `Z:\qianwen`，然后运行：
+先进入项目根目录。项目可以放在任意位置；脚本按自身位置查找配置、题集和本地密钥。
+
+Windows PowerShell：
 
 ```powershell
-python .\评测\run.py --list
-python .\评测\run.py --item 固定题集精度 --profile smoke
-python .\评测\run.py --profile smoke
+cd Z:\qianwen
+python -m 评测.run --list
+python -m 评测.run --item 固定题集精度 --profile smoke
+python -m 评测.run --profile smoke
 ```
 
-详细参数、独立计分和结果目录见 [评测说明](评测/README.md)。单独手工聊天可运行 `python .\qwen_chat.py "你好"`。
+Ubuntu Bash（将路径换成实际项目位置）：
 
-结果写入 `评测/结果/<运行时间>/`，该目录不会提交到 Git。现有分数是本地用例通过率，并不等于照片中的正式等级。
+```bash
+cd /path/to/qianwen
+python3 -m 评测.run --list
+python3 -m 评测.run --item 固定题集精度 --profile smoke
+python3 -m 评测.run --profile smoke
+```
+
+如果用环境变量覆盖密钥，PowerShell 用 `$env:DASHSCOPE_API_KEY = '...'`，Bash 用 `export DASHSCOPE_API_KEY='...'`。
+
+详细参数、独立计分和结果目录见 [评测说明](评测/README.md)。单独手工聊天可在项目根目录运行 `python -m qwen_chat "你好"`（Ubuntu 通常用 `python3`）。
+
+结果写入项目内的 `评测/结果/<运行时间>/`，该目录不会提交到 Git。相对的 `--output-dir` 也以项目根目录为基准。现有分数是本地用例通过率，并不等于照片中的正式等级。

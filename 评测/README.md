@@ -4,26 +4,26 @@
 
 ## 最简单的运行方法
 
-在项目根目录的 PowerShell 里：
+在项目根目录运行（Windows 用 `python`，Ubuntu 通常用 `python3`）：
 
-```powershell
-python .\评测\run.py --list
-python .\评测\run.py --item 固定题集精度 --profile smoke
-python .\评测\run.py --item 长上下文 --profile smoke
+```text
+python -m 评测.run --list
+python -m 评测.run --item 固定题集精度 --profile smoke
+python -m 评测.run --item 长上下文 --profile smoke
 ```
 
 不写 `--item` 才会依次运行全部七项：
 
-```powershell
-python .\评测\run.py --profile smoke
+```text
+python -m 评测.run --profile smoke
 ```
 
-结果保存在 `评测/结果/<运行时间>/`。其中 `总览.md` 只列各项分数；每个项目都有独立的 `报告.md` 和 `结果.json`。每次运行都会新建目录，旧结果不会被覆盖。`--output-dir` 可指定结果位置。
+结果保存在项目内的 `评测/结果/<运行时间>/`。其中 `总览.md` 只列各项分数；每个项目都有独立的 `报告.md` 和 `结果.json`。每次运行都会新建目录，旧结果不会被覆盖。`--output-dir` 可指定结果位置；相对路径以项目根目录为基准，绝对路径按当前操作系统解释。
 
 默认沿用项目根目录 `eval_config.json` 中的模型和档位；可以用 `--model`、`--base-url` 和环境变量 `DASHSCOPE_BASE_URL` 覆盖。运行前在项目根目录的 `本地密钥.txt` 写入 API Key；设置 `DASHSCOPE_API_KEY` 环境变量时会优先使用环境变量。当前默认档位 `smoke` 的题数和请求次数较少；`standard`、`extended` 会增加测试量。长上下文可单测一个指定长度：
 
-```powershell
-python .\评测\run.py --item 长上下文 --only-long-context --context-words 7000
+```text
+python -m 评测.run --item 长上下文 --only-long-context --context-words 7000
 ```
 
 ## 怎么看分数
