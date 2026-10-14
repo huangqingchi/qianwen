@@ -1,6 +1,6 @@
 """性能基线：测少量串行、并发、流式请求的响应时间。
 
-只输出成功率、P50/P95、首令牌时间等实测值；没有验收阈值时不打性能分。
+只输出成功率、P50/P95、首 token 时间等实测值；没有验收阈值时不打性能分。
 快速档样本量很小，不能据此推断生产环境的稳定延迟。
 """
 
@@ -36,14 +36,14 @@ def run(ctx: dict, profile: dict) -> list[dict]:
     results = serial + parallel
     good = [item for item in results if item.get("status") == 200 and item.get("content")]
     latencies = [item["latency_ms"] for item in good]
-    # “输出令牌/秒”用服务端 completion_tokens 除以端到端时长，
-    # 某些推理模型的 completion_tokens 包含推理令牌，所以它不是可见文字生成速度。
+    # “输出 token/秒”用服务端 completion_tokens 除以端到端时长，
+    # 某些推理模型的 completion_tokens 包含推理 token，所以它不是可见文字生成速度。
     rates = []
     for item in good:
         tokens = (item.get("usage") or {}).get("completion_tokens")
         if type(tokens) is int and item["latency_ms"] > 0:
             rates.append(tokens / (item["latency_ms"] / 1000))
-    # 另发一条流式请求，记录首令牌和首段可见文字出现的时间。
+    # 另发一条流式请求，记录首 token 和首段可见文字出现的时间。
     stream = call(ctx, [{"role": "user", "content": "用一句话介绍桂花。"}],
                   stream=True, stream_options={"include_usage": True})
     # 任何请求失败都标“失败”；全部成功则只标“已测量”，仍不换算等级。

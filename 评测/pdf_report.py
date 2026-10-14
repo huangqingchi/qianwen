@@ -115,8 +115,17 @@ def build_pdf(run_dir: Path) -> Path:
             f"待确认 {tally['待确认数']} 项；仅测量 {tally['仅测量数']} 项。"
         ))
         for case in result.get("用例结果", []):
-            details = [f"{key}：{display(value)}" for key, value in case.items()
-                       if key not in {"用例名称", "结果"}]
+            details = []
+            for key, value in case.items():
+                if key in {"用例名称", "结果"}:
+                    continue
+                if value is not None and key == "平均输出速度（token/s）":
+                    shown = f"{value:g} token/s"
+                elif value is not None and key == "缓存命中率（%）":
+                    shown = f"{value:g}%"
+                else:
+                    shown = display(value)
+                details.append(f"{key}：{shown}")
             block = [paragraph(f"{case.get('用例名称', '未命名用例')}　—　{case.get('结果', '未知')}", "h2")]
             block.extend(paragraph(detail) for detail in details)
             story.append(KeepTogether(block))

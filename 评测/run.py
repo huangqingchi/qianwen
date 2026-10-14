@@ -24,20 +24,21 @@ FIELD_NAMES = {
     "object": "对象类型", "role": "消息角色", "answer": "模型回答",
     "events": "流式事件数", "done": "正常结束", "error_code": "错误代码",
     "error_message": "错误信息", "error_type": "错误类型",
-    "prompt_tokens": "输入令牌数", "completion_tokens": "输出令牌数",
-    "total_tokens": "令牌总数", "cached_tokens": "缓存令牌数",
+    "prompt_tokens": "输入 token 数", "completion_tokens": "输出 token 数",
+    "total_tokens": "token 总数", "cached_tokens": "缓存 token 数",
     "latency_ms": "耗时（毫秒）", "expected": "预期结果", "actual": "实际结果",
     "category": "题目类别", "measurements": "请求测量", "note": "说明",
     "requested": "请求数", "successful": "成功数", "success_rate": "成功率",
     "latency_p50_ms": "耗时P50（毫秒）", "latency_p95_ms": "耗时P95（毫秒）",
-    "output_tokens_per_sec_mean": "平均输出令牌速度（每秒）",
-    "streaming_first_token_ms": "流式首令牌时间（毫秒）",
+    "output_tokens_per_sec_mean": "平均输出速度（token/s）",
+    "streaming_first_token_ms": "流式首 token 时间（毫秒）",
     "streaming_first_visible_ms": "流式首段可见文本时间（毫秒）",
-    "usage": "令牌用量", "stream": "流式请求",
+    "usage": "token 用量", "stream": "流式请求",
     "intentional_error": "预期错误请求",
-    "prompt_tokens_details": "输入令牌详情",
-    "completion_tokens_details": "输出令牌详情",
-    "reasoning_tokens": "推理令牌数",
+    "prompt_tokens_details": "输入 token 详情",
+    "completion_tokens_details": "输出 token 详情",
+    "reasoning_tokens": "推理 token 数",
+    "cache_token_hit_rate_pct": "缓存命中率（%）",
 }
 
 
@@ -118,7 +119,15 @@ def save_item(out_dir: Path, item: str, model: str, base_url: str,
     for item_result in checks:
         details = chinese_fields({k: v for k, v in item_result.items()
                                   if k not in {"name", "status"}})
-        detail_text = "；".join(f"{key}：{readable(value)}" for key, value in details.items())
+        def evidence_text(key: str, value: object) -> str:
+            if value is not None and key == "平均输出速度（token/s）":
+                return f"{value:g} token/s"
+            if value is not None and key == "缓存命中率（%）":
+                return f"{value:g}%"
+            return readable(value)
+
+        detail_text = "；".join(f"{key}：{evidence_text(key, value)}"
+                               for key, value in details.items())
         detail_text = detail_text.replace("|", "\\|").replace("\n", " ")
         lines.append(f"| {item_result['name']} | {STATUS_NAMES.get(item_result['status'], item_result['status'])} | "
                      f"{detail_text} |")

@@ -26,10 +26,20 @@ class FakeChat(BaseHTTPRequestHandler):
         elif not isinstance(payload["messages"], list):
             status, body = 400, {"error": {"code": "invalid_parameter", "message": "bad messages"}}
         else:
+            messages = payload["messages"]
+            if messages and messages[0]["role"] == "system":
+                question = messages[-1]["content"]
+                cached = (0 if "第一个问题" in question else
+                          1024 if "第二个问题" in question else 1536)
+                usage = {"prompt_tokens": 2048, "completion_tokens": 1,
+                         "total_tokens": 2049,
+                         "prompt_tokens_details": {"cached_tokens": cached}}
+            else:
+                usage = {"prompt_tokens": 2, "completion_tokens": 1, "total_tokens": 3}
             status, body = 200, {
                 "id": "test-1", "object": "chat.completion", "model": payload["model"],
                 "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "OK"}}],
-                "usage": {"prompt_tokens": 2, "completion_tokens": 1, "total_tokens": 3},
+                "usage": usage,
             }
         if payload.get("stream") and status == 200:
             self.send_response(200)
@@ -56,7 +66,7 @@ def test_each_item_has_its_own_score_and_report(tmp_path):
     thread.start()
     try:
         env = {**os.environ, "DASHSCOPE_API_KEY": "local-test-key"}
-        for item, expected_count in (("用量统计", 2), ("错误契约", 3)):
+        for item, expected_count in (("用量统计", 2), ("错误契约", 3), ("缓存命中", 1)):
             output = tmp_path / item
             # 模块方式和“从项目外执行脚本”各跑一次，覆盖两种启动路径。
             if item == "用量统计":
@@ -76,6 +86,11 @@ def test_each_item_has_its_own_score_and_report(tmp_path):
             assert result["计分"]["通过数"] == expected_count
             assert result["计分"]["本地用例分数"] == 100
             assert all(check["结果"] == "通过" for check in result["用例结果"])
+            if item == "用量统计":
+                assert "输入 token 数" in result["用例结果"][0]
+                assert "令牌" not in json.dumps(result, ensure_ascii=False)
+            if item == "缓存命中":
+                assert result["用例结果"][0]["缓存命中率（%）"] == 62.5
             assert (output / item / "报告.md").exists()
             assert (output / "总览.md").exists()
             pdf = output / "评测汇总.pdf"

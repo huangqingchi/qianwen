@@ -47,7 +47,7 @@ def post_chat(base_url: str, api_key: str, payload: dict, timeout: int) -> dict:
                     for choice in event.get("choices") or []:
                         delta = choice.get("delta") or {}
                         content = delta.get("content") or ""
-                        # “首令牌”可能是推理内容；“首段可见文本”只看普通正文。
+                        # “首 token”可能是推理内容；“首段可见文本”只看普通正文。
                         if (delta.get("reasoning_content") or content) and first_token_ms is None:
                             first_token_ms = round((time.perf_counter() - start) * 1000, 2)
                         if content:

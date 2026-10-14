@@ -1,6 +1,6 @@
 """用量统计：分别测普通响应、流式响应，各记 1 个用例。
 
-只检查接口返回的令牌数字是否自洽，不独立计算真实令牌数或费用。
+只检查接口返回的 token 数字是否自洽，不独立计算真实 token 数或费用。
 """
 
 from common import call, check
@@ -15,7 +15,7 @@ def run(ctx: dict, profile: dict) -> list[dict]:
     ]
     checks = []
     for name, result in responses:
-        # 读取服务端原样返回的输入、输出、合计和缓存令牌数。
+        # 读取服务端原样返回的输入、输出、合计和缓存 token 数。
         usage = result.get("usage") or {}
         prompt = usage.get("prompt_tokens")
         completion = usage.get("completion_tokens")
