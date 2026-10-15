@@ -1,1 +1,4 @@
+ray==2.49.2
+pydantic>=2,<3
+requests>=2.32,<3
 reportlab>=4.4,<5

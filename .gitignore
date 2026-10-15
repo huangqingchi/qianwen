@@ -2,7 +2,10 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .venv/
+.venv-linux/
 .env
 .env.*
-/评测/结果/
+/历史评测结果/
 /本地密钥.txt
+/.benchmark_src/
+/benchmark_results/

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "seed": 11111,
+  "sampling": {"temperature": 0, "reasoning_effort": "low"},
+  "words": ["alpha", "cedar", "river", "stone", "amber", "garden", "orbit", "harbor"],
+  "scenarios": {
+    "short": {"word_count": 90, "target_visible_chars": 80, "max_tokens": 2048},
+    "medium": {"word_count": 850, "target_visible_chars": 180, "max_tokens": 3072},
+    "long": {"word_count": 3400, "target_visible_chars": 350, "max_tokens": 4096}
+  }
+}
